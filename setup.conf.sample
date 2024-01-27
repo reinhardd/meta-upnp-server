@@ -1,0 +1,18 @@
+#
+# DOWNLOADS is used to create create DL_DIR
+# -> https://docs.yoctoproject.org/bitbake/2.6/bitbake-user-manual/bitbake-user-manual-ref-variables.html#term-DL_DIR
+#
+# provide an absolute path without shortcuts '..~.'
+#
+# a good practice is to use a target directory named after the currently used yocto version
+#
+#
+
+DOWNLOADS="/home/myself/yocto/downloads/<yocto-version-name>"
+
+#
+# we search first here before we do a local download
+#    will be transformed to a PREMIRROR entry
+# caution: entry needs a trailing /
+# SHARED_DOWNLOADS="http://10.100.250.153/yocto/langdale/core-build/genericx86-64/sources/"
+

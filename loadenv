@@ -1,0 +1,113 @@
+#!/bin/bash
+#
+# enters the yocto bitbake shell
+# 
+# call it directly if your os is supported by the poky version used
+# otherwise use 
+# 
+
+HERE=$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )
+(return 0 2>/dev/null) && sourced=1 || sourced=0
+# echo "sourced $sourced"
+
+if [ "$sourced" = "0" ]; then
+    echo "this script $0 is meant for sourcing "
+    echo "do something like this: source $0 <parameters>"
+    exit
+fi
+
+cd "$HERE"
+
+CNFDIR="layers/meta-local/conf/templates"
+TMPL_DIR=""
+DL_DIR=""
+
+function testconfig
+{
+    local configname="$1"
+    local confdir="$CNFDIR/$configname"
+    local localconf="$confdir/local.conf.sample"
+    local localbb="$confdir/bblayers.conf.sample"
+
+    if [ ! -d "$confdir" ]; then
+        echo "config template dir $confdir not found"
+    elif [ ! -f "$localconf" ]; then
+        echo "no local.conf.sample $localconf found"
+    elif [ ! -f "$localbb" ]; then
+        echo "no bblayers.conf.sample $localbb found"
+    else
+        TMPL_DIR="$confdir"
+    fi
+}
+
+function usage
+{
+    echo "usage $0"
+    echo " $0 -h|--help     show this help"
+    echo "    -c|--config   set template config dir"
+    echo "possible configs "
+    echo "-----------"
+    ls $CNFDIR
+    echo "-----------"
+    echo ""
+}
+
+
+CONFIGNAME=""
+
+POSITIONAL_ARGS=()
+
+earlyexit=0
+
+while [[ $# -gt 0 ]]; do
+  case $1 in
+    -c|--config)
+      CONFIGNAME="$2"
+      testconfig $CONFIGNAME
+      shift # past argument
+      shift # past value
+      ;;
+    -h|--help)
+      shift
+      usage
+      earlyexit=1
+      ;;
+    -*|--*)
+      echo "Unknown option $1"
+      ;;
+    *)
+      POSITIONAL_ARGS+=("$1") # save positional arg
+      shift # past argument
+      ;;
+  esac
+done
+
+set -- "${POSITIONAL_ARGS[@]}" # restore positional parameters
+
+if [ $earlyexit -eq 0 ]; then
+    if [ ! -f setup.conf ]; then
+        echo "setup.conf missing"
+    else
+        source setup.conf
+        DL_DIR="$DOWNLOADS"
+        if [ "x$DL_DIR" == "x" ]; then
+            echo "no entry DOWNLOADS defined in setup.conf"
+        fi
+    fi
+
+    if [ "x$DL_DIR" = "x" ]; then
+        echo "DOWNLOADS not set in setup.conf"
+        false
+    elif [ ! -d "$TMPL_DIR" ]; then
+        echo "Template dir $TMPL_DIR not found"
+        false
+    else
+        export TEMPLATECONF="$HERE/$TMPL_DIR"
+        export DL_DIR
+        export BB_ENV_PASSTHROUGH_ADDITIONS="DL_DIR"
+        source layers/poky/oe-init-build-env "build_$CONFIGNAME"
+        true
+    fi
+else
+    false
+fi
