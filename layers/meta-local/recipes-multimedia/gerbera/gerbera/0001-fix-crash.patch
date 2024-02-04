@@ -1,0 +1,22 @@
+From 06b85d65cc62a842d61c9ff0b09d6f1b1d6d0c93 Mon Sep 17 00:00:00 2001
+From: Reinhard <reinhard.doerner@gmail.com>
+Date: Sun, 4 Feb 2024 16:48:18 +0100
+Subject: [PATCH] fix crash
+
+---
+ src/content/content_manager.cc | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/src/content/content_manager.cc b/src/content/content_manager.cc
+index 8bfa90b9..e9cd415a 100644
+--- a/src/content/content_manager.cc
++++ b/src/content/content_manager.cc
+@@ -478,7 +478,7 @@ std::shared_ptr<CdsObject> ContentManager::_addFile(const fs::directory_entry& d
+         // checkDatabase, don't process existing
+         std::shared_ptr<CdsContainer> parent;
+         auto parentObject = database->findObjectByPath(dirEnt.path().parent_path(), DbFileType::Directory);
+-        if (parentObject->isContainer())
++        if (parentObject && parentObject->isContainer())
+             parent = std::dynamic_pointer_cast<CdsContainer>(parentObject);
+         auto obj = createSingleItem(dirEnt, parent, rootPath, asSetting.followSymlinks, true, false, false, asSetting.adir, task);
+         if (!obj) // object ignored
