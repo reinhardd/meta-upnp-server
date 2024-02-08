@@ -1,0 +1,16 @@
+#!/bin/sh
+HERE=$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )
+(return 0 2>/dev/null) && sourced=1 || sourced=0
+
+if [ "$sourced" = "1" ]; then
+  echo "enter-toolbox is not meant for sourcing"
+  return 99
+fi
+
+cd $HERE
+
+source ./setup.conf
+
+toolbox enter $TOOLBOX_CONTAINER
+
+
