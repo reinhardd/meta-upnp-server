@@ -8,11 +8,10 @@
 #
 #
 
-DOWNLOADS="/home/myself/yocto/downloads/<yocto-version-name>"
+DOWNLOADS="/home/<myself>/yocto/downloads/<yocto-version-name>"
 
 #
-# we search first here before we do a local download
-#    will be transformed to a PREMIRROR entry
-# caution: entry needs a trailing /
-# SHARED_DOWNLOADS="http://10.100.250.153/yocto/langdale/core-build/genericx86-64/sources/"
-
+# use toolbox on non yocto compatible systems
+# -> README.md
+#
+# TOOLBOX_CONTAINER=fedora-38-yocto
