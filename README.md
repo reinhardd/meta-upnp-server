@@ -18,6 +18,17 @@ and check against the assignement `SANITY_TESTED_DISTROS ?= ...` in file `layers
 
 If your system is not compatible try the toolbox approach described below. You may also use docker instead.
 
+### install packages
+
+Install missing dependencies. 
+
+https://docs.yoctoproject.org/ref-manual/system-requirements.html?highlight=requirements#required-packages-for-the-build-host should tell you what is needed. 
+
+Unfortunately this is not enough. Some packages need soome perl tools, mostly when configuring packages, that could be missing on your host. 
+Compilations stops with i.e. `Can't locate XXX.pm in @INC (you may need to install the XXX module)`. 
+Search for and install them using the systems package manager.
+
+
 ### Enter the bitbake shell
 
 1. source loadenv -c < template >  
@@ -50,7 +61,7 @@ For general usage information see https://github.com/containers/toolbox .
 2. install needed packages  
    `https://docs.yoctoproject.org/ref-manual/system-requirements.html?highlight=fedora#required-packages-for-the-build-host`  
    
-   **WARNING: when using a fedora image do not use dnf for installs, that may trigger a lot of unwanted interaction with your host system.**
+   **WARNING: when using a fedora image be carefull when installing packages, this may trigger unwanted interactions with your host system.**
    
 3. assign that container name to TOOLBOX_CONTAINER in setup.conf  
    uncomment that entry
